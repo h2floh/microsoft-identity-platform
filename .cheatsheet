@@ -1,0 +1,14 @@
+## URL Encode with jq
+
+echo '' | jq -sRr @uri
+
+## Well Known URL suffix
+
+.well-known/openid-configuration
+
+## Wrap x5c Signature in jwt.io verification box 
+
+```bash
+-----BEGIN PUBLIC KEY-----
+-----END PUBLIC KEY-----
+```
