@@ -1,5 +1,8 @@
+using AuthorizationPoliciesSample.Policies.Requirements;
+using AuthorizationPoliciesSample.Policies.Handlers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +27,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.Authority = "https://sts.windows.net/ed7e92da-c902-4646-82b7-81cfa187d25e/";
         //options.MetadataAddress = "https://sts.windows.net/ed7e92da-c902-4646-82b7-81cfa187d25e/v2.0/.well-known/openid-configuration";
     });
-builder.Services.AddAuthorization();
+
+//Special claim check
+builder.Services.AddSingleton<IAuthorizationHandler, AdditionalClaimsHandler>();
+builder.Services.AddAuthorizationBuilder()
+  .AddPolicy("weatherforecast", policy =>
+        policy.Requirements.Add(new AdditionalClaimsRequirement()));
 
 var app = builder.Build();
 app.UseAuthentication();
@@ -58,7 +66,8 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi()
-.RequireAuthorization();
+//.RequireAuthorization();
+.RequireAuthorization("weatherforecast");
 
 app.Run();
 
