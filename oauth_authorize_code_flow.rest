@@ -1,0 +1,91 @@
+### Microsoft identity platform and OAuth 2.0 authorization code flow
+
+### Set up an Entra application and give it delegate permissions to Microsoft Graph
+### https://portal.azure.com/?quickstart=True#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/RegisteredApps
+
+@clientid = 
+@tenantid = 
+
+### Request authorization code (generate URL with Rest Client: cURL and open in private browser)
+GET https://login.microsoftonline.com/{{tenantid}}/oauth2/v2.0/authorize
+?client_id={{clientid}}
+&response_type=code
+&redirect_uri=http%3A%2F%2Flocalhost%2Fmyapp%2F
+&response_mode=query
+&scope=https%3A%2F%2Fgraph.microsoft.com%2Fuser.read
+
+### Got the auth code put it here?
+
+@authcode = 
+
+### secret of the application
+@client_secret = 
+
+### Request access token for MS Graph
+
+POST https://login.microsoftonline.com/{{tenantid}}/oauth2/v2.0/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{clientid}}
+&scope=https%3A%2F%2Fgraph.microsoft.com%2Fuser.read
+&code={{authcode}}
+&redirect_uri=http%3A%2F%2Flocalhost%2Fmyapp%2F
+&grant_type=authorization_code
+&client_secret={{client_secret}}
+
+### Got the access token put it here
+
+@access_token = 
+
+### Call Microsoft Graph API
+
+GET https://graph.microsoft.com/v1.0/me
+Authorization: Bearer {{access_token}}
+
+
+### Request access token for own API
+
+### Request authorization code (generate URL with Rest Client: cURL and open in private browser)
+GET https://login.microsoftonline.com/{{tenantid}}/oauth2/v2.0/authorize
+?client_id={{clientid}}
+&response_type=code
+&redirect_uri=http%3A%2F%2Flocalhost%2Fmyapp%2F
+&response_mode=query
+&scope=api%3A%2F%2Fmydemo%2Fdefault
+
+### Got the auth code put it here?
+
+@authcodeapi = 
+
+POST https://login.microsoftonline.com/{{tenantid}}/oauth2/v2.0/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{clientid}}
+&code={{authcodeapi}}
+&redirect_uri=http%3A%2F%2Flocalhost%2Fmyapp%2F
+&grant_type=authorization_code
+&client_secret={{client_secret}}
+&scope=api%3A%2F%2Fmydemo%2Fdefault%20offline_access
+
+
+### Got the access token and refresh token put it here
+
+@access_token_api = 
+@refresh_token_api = 
+
+
+### Call own API
+
+GET https://localhost:7196/weatherforecast
+Authorization: Bearer {{access_token_api}}
+
+### Get a new access token from a refresh token
+
+POST https://login.microsoftonline.com/{{tenantid}}/oauth2/v2.0/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{clientid}}
+&scope=api%3A%2F%2Fmydemo%2Fdefault
+&refresh_token={{refresh_token_api}}
+&grant_type=refresh_token
+&client_secret={{client_secret}}
