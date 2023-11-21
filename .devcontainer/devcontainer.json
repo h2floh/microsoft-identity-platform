@@ -20,7 +20,8 @@
 				"humao.rest-client",
 				"yzhang.markdown-all-in-one",
 				"DavidAnson.vscode-markdownlint",
-				"GitHub.copilot"
+				"GitHub.copilot",
+				"ms-dotnettools.csdevkit"
 			]
 		}
 	}

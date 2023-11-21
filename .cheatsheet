@@ -12,3 +12,15 @@ echo '' | jq -sRr @uri
 -----BEGIN PUBLIC KEY-----
 -----END PUBLIC KEY-----
 ```
+
+## Run dotnet with https (from 7.0 upwards)
+
+cerate dev certs
+```bash
+dotnet dev-certs https --trust
+```
+
+launch in https mode with automatic rebuild
+```bash
+dotnet watch run --launch-profile https
+```
